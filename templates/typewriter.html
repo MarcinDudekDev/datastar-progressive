@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Typewriter Demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    body {
+      background: #0d1117;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #typewriter {
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.4;
+      color: #00ff00;
+      white-space: pre;
+      text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    }
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 1.2em;
+      background: #00ff00;
+      animation: blink 0.7s infinite;
+      vertical-align: text-bottom;
+    }
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="typewriter"
+       data-signals='{"content": ""}'
+       data-init="@get('/stream-typewriter')"><span data-text="$content"></span><span class="cursor"></span></div>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"></script>
+</body>
+</html>

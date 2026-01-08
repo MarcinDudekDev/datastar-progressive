@@ -1,0 +1,29 @@
+<div id="app">
+  <header>
+    <h1>🚀 Progressive App</h1>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+  <div style="display: grid; grid-template-columns: 1fr 300px; gap: 1rem;">
+    <main>
+      <p><em>Main content area ready</em></p>
+    </main>
+    <aside class="stage-enter">
+      <article>
+        <header><strong>Widget</strong></header>
+        <p>Sidebar info</p>
+      </article>
+      <article>
+        <header><strong>Stats</strong></header>
+        <p>Users: 42</p>
+      </article>
+    </aside>
+  </div>
+  <p>Sidebar loaded...</p>
+  <div data-init="@get('/load/footer')"></div>
+</div>

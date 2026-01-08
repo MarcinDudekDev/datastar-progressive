@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Progressive Loading Demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    .stage-enter {
+      animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    header.stage-enter { animation-delay: 0s; }
+    nav.stage-enter { animation-delay: 0.05s; }
+    main.stage-enter { animation-delay: 0.1s; }
+    aside.stage-enter { animation-delay: 0.15s; }
+    footer.stage-enter { animation-delay: 0.2s; }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div id="app" data-signals='{"current_stage": "shell"}'>
+      <h1 class="stage-enter">Progressive Loading Demo</h1>
+      <p>Watch as the UI unpacks automatically...</p>
+      <div data-init="@get('/load/header')"></div>
+    </div>
+  </main>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"></script>
+</body>
+</html>

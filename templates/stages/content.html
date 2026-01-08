@@ -1,0 +1,45 @@
+<div id="app">
+  <header>
+    <h1>🚀 Progressive App</h1>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+  <div style="display: grid; grid-template-columns: 1fr 300px; gap: 1rem;">
+    <main class="stage-enter">
+      <article>
+        <h2>Welcome to Progressive Loading!</h2>
+        <p>This app demonstrates automatic cascading UI using DataStar SSE morphing.</p>
+        <p>Each stage was loaded incrementally with server-sent events.</p>
+        <h3>Stages Completed:</h3>
+        <ul>
+          <li>Header</li>
+          <li>Navigation</li>
+          <li>Main area</li>
+          <li>Sidebar</li>
+          <li>Footer</li>
+          <li>Content</li>
+        </ul>
+        <p><mark>Complete!</mark> All stages loaded automatically.</p>
+        <p><a href="/typewriter" role="button">Try the Typewriter Demo</a></p>
+      </article>
+    </main>
+    <aside>
+      <article>
+        <header><strong>Widget</strong></header>
+        <p>Sidebar info</p>
+      </article>
+      <article>
+        <header><strong>Stats</strong></header>
+        <p>Users: 42</p>
+      </article>
+    </aside>
+  </div>
+  <footer>
+    <p>&copy; 2026 Progressive App | Built with DataStar</p>
+  </footer>
+</div>
