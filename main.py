@@ -119,20 +119,21 @@ async def stream_ticker():
                     prev_close = info.get("regularMarketPreviousClose", price)
 
                     if price:
-                        old_price = prev_prices.get(sym, price)
-                        prev_prices[sym] = price
-
-                        # Direction based on previous fetch (for flash animation)
-                        direction = "up" if price > old_price else "down" if price < old_price else ""
-                        # Change % based on previous close (market change)
+                        # Change % based on previous close (daily market change)
                         change_pct = ((price - prev_close) / prev_close) * 100 if prev_close else 0
+                        # Direction for colors based on daily change
+                        daily_dir = "up" if change_pct > 0 else "down" if change_pct < 0 else ""
+                        # Flash only on fetch-to-fetch change
+                        old_price = prev_prices.get(sym, price)
+                        flash = price != old_price
+                        prev_prices[sym] = price
 
                         signals[f"{sym}_symbol"] = sym
                         signals[f"{sym}_name"] = STOCK_NAMES[sym]
                         signals[f"{sym}_price"] = f"${price:.2f}"
                         signals[f"{sym}_change"] = f"{'+' if change_pct >= 0 else ''}{change_pct:.2f}%"
-                        signals[f"{sym}_dir"] = direction
-                        signals[f"{sym}_ts"] = ts
+                        signals[f"{sym}_dir"] = daily_dir  # For color
+                        signals[f"{sym}_ts"] = ts if flash else 0  # Only flash on actual change
 
                 yield SSE.patch_signals(signals)
             except Exception as e:
