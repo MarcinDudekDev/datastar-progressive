@@ -1,0 +1,35 @@
+{
+  "subtasks": [
+    {
+      "id": 1,
+      "name": "ticker_template",
+      "description": "Create ticker.html with Bloomberg-style dark theme, table for stocks, flash animations",
+      "model": "sonnet",
+      "prompt_file": ".batman/prompts/1_ticker_template.md",
+      "output_file": ".batman/outputs/1_ticker_template.txt",
+      "target_file": "/Users/cminds/PycharmProjects/datastar-progressive/templates/ticker.html",
+      "dependencies": []
+    },
+    {
+      "id": 2,
+      "name": "ticker_endpoints",
+      "description": "Add /ticker page endpoint and /stream-ticker SSE endpoint with fake price generator",
+      "model": "sonnet",
+      "prompt_file": ".batman/prompts/2_ticker_endpoints.md",
+      "output_file": ".batman/outputs/2_ticker_endpoints.txt",
+      "target_file": "/Users/cminds/PycharmProjects/datastar-progressive/main.py",
+      "dependencies": []
+    },
+    {
+      "id": 3,
+      "name": "add_ticker_link",
+      "description": "Add navigation link to ticker demo in index.html",
+      "model": "haiku",
+      "prompt_file": ".batman/prompts/3_add_ticker_link.md",
+      "output_file": ".batman/outputs/3_add_ticker_link.txt",
+      "target_file": "/Users/cminds/PycharmProjects/datastar-progressive/templates/index.html",
+      "dependencies": []
+    }
+  ],
+  "execution_order": [1, 2, 3]
+}

@@ -4,19 +4,19 @@ from fastapi.responses import HTMLResponse
 from datastar_py import ServerSentEventGenerator as SSE
 from datastar_py.fastapi import DatastarResponse
 import asyncio
-import yfinance as yf
+import random
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# Stock symbols and names
-STOCK_NAMES = {
-    "AAPL": "Apple Inc.",
-    "GOOGL": "Alphabet Inc.",
-    "MSFT": "Microsoft Corp.",
-    "TSLA": "Tesla Inc.",
-    "AMZN": "Amazon.com Inc.",
-}
+# Stock data
+STOCKS = [
+    {"symbol": "DSTR", "name": "DataStar Inc", "price": 127.50},
+    {"symbol": "HTMX", "name": "Hypermedia Corp", "price": 89.25},
+    {"symbol": "PYTH", "name": "Python Holdings", "price": 245.00},
+    {"symbol": "FAST", "name": "FastAPI Ltd", "price": 156.75},
+    {"symbol": "PICO", "name": "PicoCSS Group", "price": 42.00},
+]
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -33,9 +33,8 @@ async def typewriter_page(request: Request):
 
 @app.get("/load/{stage}")
 async def load_stage(stage: str, request: Request):
-    """SSE endpoint to load a stage fragment with slight delay for visual effect"""
+    """SSE endpoint to load a stage fragment"""
     async def generate():
-        await asyncio.sleep(0.3)  # Slight delay for unpacking effect
         stage_html = templates.get_template(f"stages/{stage}.html").render({"request": request})
         yield SSE.patch_elements(stage_html)
         yield SSE.patch_signals({"current_stage": stage})
@@ -101,46 +100,32 @@ async def ticker_page(request: Request):
 
 @app.get("/stream-ticker")
 async def stream_ticker():
-    """Stream real stock prices from Yahoo Finance"""
-    import time
+    """Stream stock prices with random fluctuations"""
     async def generate():
-        symbols = list(STOCK_NAMES.keys())
-        prev_prices = {}
+        prices = {s["symbol"]: s["price"] for s in STOCKS}
 
         while True:
-            signals = {}
-            ts = int(time.time() * 1000)
+            stocks_data = []
+            for stock in STOCKS:
+                sym = stock["symbol"]
+                old_price = prices[sym]
+                change = random.uniform(-1.5, 1.5)
+                new_price = max(1.0, old_price + change)
+                prices[sym] = new_price
 
-            try:
-                # Fetch real prices from Yahoo Finance
-                tickers = yf.Tickers(" ".join(symbols))
-                for sym in symbols:
-                    info = tickers.tickers[sym].info
-                    price = info.get("regularMarketPrice", 0) or info.get("currentPrice", 0)
-                    prev_close = info.get("regularMarketPreviousClose", price)
+                direction = "up" if new_price > old_price else "down" if new_price < old_price else "none"
+                change_pct = ((new_price - old_price) / old_price) * 100
 
-                    if price:
-                        # Change % based on previous close (daily market change)
-                        change_pct = ((price - prev_close) / prev_close) * 100 if prev_close else 0
-                        # Direction for colors based on daily change
-                        daily_dir = "up" if change_pct > 0 else "down" if change_pct < 0 else ""
-                        # Flash only on fetch-to-fetch change
-                        old_price = prev_prices.get(sym, price)
-                        flash = price != old_price
-                        prev_prices[sym] = price
+                stocks_data.append({
+                    "symbol": sym,
+                    "name": stock["name"],
+                    "price": f"${new_price:.2f}",
+                    "change": f"{'+' if change_pct >= 0 else ''}{change_pct:.2f}%",
+                    "dir": direction
+                })
 
-                        signals[f"{sym}_symbol"] = sym
-                        signals[f"{sym}_name"] = STOCK_NAMES[sym]
-                        signals[f"{sym}_price"] = f"${price:.2f}"
-                        signals[f"{sym}_change"] = f"{'+' if change_pct >= 0 else ''}{change_pct:.2f}%"
-                        signals[f"{sym}_dir"] = daily_dir  # For color
-                        signals[f"{sym}_ts"] = ts if flash else 0  # Only flash on actual change
-
-                yield SSE.patch_signals(signals)
-            except Exception as e:
-                print(f"Error fetching prices: {e}")
-
-            await asyncio.sleep(5.0)  # Poll every 5 seconds (be nice to Yahoo)
+            yield SSE.patch_signals({"stocks": stocks_data})
+            await asyncio.sleep(1.0)  # Update every second
 
     return DatastarResponse(generate())
 

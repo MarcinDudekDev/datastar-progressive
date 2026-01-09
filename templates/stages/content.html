@@ -1,12 +1,12 @@
-<div id="app">
+<div id="app" data-signals='{"clicks": 0}'>
   <header>
     <h1>🚀 Progressive App</h1>
   </header>
   <nav>
     <ul>
-      <li><a href="#">Home</a></li>
-      <li><a href="#">About</a></li>
-      <li><a href="#">Contact</a></li>
+      <li><a href="/">Home</a></li>
+      <li><a href="/typewriter">Typewriter</a></li>
+      <li><a href="/ticker">Stock Ticker</a></li>
     </ul>
   </nav>
   <div style="display: grid; grid-template-columns: 1fr 300px; gap: 1rem;">
@@ -25,17 +25,17 @@
           <li>Content</li>
         </ul>
         <p><mark>Complete!</mark> All stages loaded automatically.</p>
-        <p><a href="/typewriter" role="button">Try the Typewriter Demo</a></p>
       </article>
     </main>
     <aside>
       <article>
-        <header><strong>Widget</strong></header>
-        <p>Sidebar info</p>
+        <header><strong>Interactive</strong></header>
+        <button data-on:click="$clicks++" style="width:100%">Click me!</button>
       </article>
       <article>
         <header><strong>Stats</strong></header>
-        <p>Users: 42</p>
+        <p>Clicks: <span data-text="$clicks"></span></p>
+        <p>Stages: 6</p>
       </article>
     </aside>
   </div>

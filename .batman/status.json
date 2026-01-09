@@ -1,0 +1,6 @@
+{
+  "phase": "ready",
+  "task": "Build DataStar Stock Ticker demo with real-time SSE price streaming",
+  "subtask_count": 3,
+  "created_at": "2026-01-09T00:00:00Z"
+}

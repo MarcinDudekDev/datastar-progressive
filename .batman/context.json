@@ -1,0 +1,23 @@
+{
+  "project": "DataStar Progressive Loading Demos",
+  "working_dir": "/Users/cminds/PycharmProjects/datastar-progressive",
+  "stack": {
+    "backend": "FastAPI + uvicorn",
+    "sse_lib": "datastar-py",
+    "css": "Pico.css v2 dark theme",
+    "frontend": "DataStar 1.0.0-RC.7 CDN"
+  },
+  "patterns": {
+    "sse_response": "DatastarResponse(generator())",
+    "signal_update": "SSE.patch_signals({...})",
+    "html_binding": "data-signals, data-init, data-text",
+    "template_dir": "templates/"
+  },
+  "key_files": {
+    "main.py": "FastAPI app with SSE endpoints",
+    "templates/typewriter.html": "Reference for DataStar HTML patterns",
+    "templates/index.html": "Main demo page (add link here)"
+  },
+  "datastar_cdn": "https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js",
+  "pico_cdn": "https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+}

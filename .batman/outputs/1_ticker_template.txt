@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DataStar Terminal - Live Stock Ticker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    body {
+      background: #0d1117;
+      min-height: 100vh;
+      font-family: 'Courier New', Monaco, monospace;
+    }
+
+    .terminal-header {
+      background: linear-gradient(180deg, #1a1f2e 0%, #0d1117 100%);
+      border-bottom: 2px solid #00ff00;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #00ff00;
+      text-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+      letter-spacing: 0.15em;
+      margin-bottom: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Courier New', Monaco, monospace;
+      font-size: 0.9rem;
+    }
+
+    thead {
+      background: #161b22;
+      border-bottom: 2px solid #30363d;
+    }
+
+    thead th {
+      color: #58a6ff;
+      font-weight: 600;
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 2px solid #30363d;
+    }
+
+    tbody td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #21262d;
+      color: #c9d1d9;
+    }
+
+    tbody tr {
+      transition: background 0.3s ease-out;
+    }
+
+    tbody tr:hover {
+      background: rgba(48, 54, 61, 0.3);
+    }
+
+    .symbol {
+      font-weight: bold;
+      color: #ffffff;
+      font-size: 1.05em;
+    }
+
+    .price {
+      font-weight: 600;
+      font-size: 1.1em;
+    }
+
+    .positive {
+      color: #00ff00;
+    }
+
+    .negative {
+      color: #ff3333;
+    }
+
+    .flash-green {
+      animation: flash-green 0.3s ease-out;
+    }
+
+    .flash-red {
+      animation: flash-red 0.3s ease-out;
+    }
+
+    @keyframes flash-green {
+      0% { background: rgba(0, 255, 0, 0.4); }
+      100% { background: transparent; }
+    }
+
+    @keyframes flash-red {
+      0% { background: rgba(255, 51, 51, 0.4); }
+      100% { background: transparent; }
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 2rem;
+      color: #58a6ff;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+      color: #79c0ff;
+      text-decoration: underline;
+    }
+
+    .status-bar {
+      text-align: center;
+      color: #8b949e;
+      font-size: 0.8rem;
+      margin-top: 1rem;
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="terminal-header">
+      ▓ DATASTAR TERMINAL ▓ LIVE MARKET DATA ▓
+    </header>
+
+    <table
+      data-signals='{
+        "AAPL_symbol": "AAPL",
+        "AAPL_name": "Apple Inc.",
+        "AAPL_price": "---",
+        "AAPL_change": "---",
+        "AAPL_dir": "",
+        "AAPL_ts": 0,
+        "GOOGL_symbol": "GOOGL",
+        "GOOGL_name": "Alphabet Inc.",
+        "GOOGL_price": "---",
+        "GOOGL_change": "---",
+        "GOOGL_dir": "",
+        "GOOGL_ts": 0,
+        "MSFT_symbol": "MSFT",
+        "MSFT_name": "Microsoft Corp.",
+        "MSFT_price": "---",
+        "MSFT_change": "---",
+        "MSFT_dir": "",
+        "MSFT_ts": 0,
+        "TSLA_symbol": "TSLA",
+        "TSLA_name": "Tesla Inc.",
+        "TSLA_price": "---",
+        "TSLA_change": "---",
+        "TSLA_dir": "",
+        "TSLA_ts": 0,
+        "AMZN_symbol": "AMZN",
+        "AMZN_name": "Amazon.com Inc.",
+        "AMZN_price": "---",
+        "AMZN_change": "---",
+        "AMZN_dir": "",
+        "AMZN_ts": 0
+      }'
+      data-init="@get('/stream-ticker')">
+      <thead>
+        <tr>
+          <th>SYMBOL</th>
+          <th>NAME</th>
+          <th>PRICE</th>
+          <th>CHANGE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-class:flash-green="$AAPL_dir == 'up' && $AAPL_ts" data-class:flash-red="$AAPL_dir == 'down' && $AAPL_ts">
+          <td class="symbol" data-text="$AAPL_symbol"></td>
+          <td data-text="$AAPL_name"></td>
+          <td class="price" data-text="$AAPL_price"></td>
+          <td data-text="$AAPL_change" data-class:positive="$AAPL_dir == 'up'" data-class:negative="$AAPL_dir == 'down'"></td>
+        </tr>
+        <tr data-class:flash-green="$GOOGL_dir == 'up' && $GOOGL_ts" data-class:flash-red="$GOOGL_dir == 'down' && $GOOGL_ts">
+          <td class="symbol" data-text="$GOOGL_symbol"></td>
+          <td data-text="$GOOGL_name"></td>
+          <td class="price" data-text="$GOOGL_price"></td>
+          <td data-text="$GOOGL_change" data-class:positive="$GOOGL_dir == 'up'" data-class:negative="$GOOGL_dir == 'down'"></td>
+        </tr>
+        <tr data-class:flash-green="$MSFT_dir == 'up' && $MSFT_ts" data-class:flash-red="$MSFT_dir == 'down' && $MSFT_ts">
+          <td class="symbol" data-text="$MSFT_symbol"></td>
+          <td data-text="$MSFT_name"></td>
+          <td class="price" data-text="$MSFT_price"></td>
+          <td data-text="$MSFT_change" data-class:positive="$MSFT_dir == 'up'" data-class:negative="$MSFT_dir == 'down'"></td>
+        </tr>
+        <tr data-class:flash-green="$TSLA_dir == 'up' && $TSLA_ts" data-class:flash-red="$TSLA_dir == 'down' && $TSLA_ts">
+          <td class="symbol" data-text="$TSLA_symbol"></td>
+          <td data-text="$TSLA_name"></td>
+          <td class="price" data-text="$TSLA_price"></td>
+          <td data-text="$TSLA_change" data-class:positive="$TSLA_dir == 'up'" data-class:negative="$TSLA_dir == 'down'"></td>
+        </tr>
+        <tr data-class:flash-green="$AMZN_dir == 'up' && $AMZN_ts" data-class:flash-red="$AMZN_dir == 'down' && $AMZN_ts">
+          <td class="symbol" data-text="$AMZN_symbol"></td>
+          <td data-text="$AMZN_name"></td>
+          <td class="price" data-text="$AMZN_price"></td>
+          <td data-text="$AMZN_change" data-class:positive="$AMZN_dir == 'up'" data-class:negative="$AMZN_dir == 'down'"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="status-bar">
+      ► Real-time updates via Server-Sent Events ◄
+    </div>
+
+    <a href="/" class="back-link">← Back to Demo Index</a>
+  </main>
+
+  <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "mappings": [
+    {
+      "output": ".batman/outputs/1_ticker_template.txt",
+      "target": "/Users/cminds/PycharmProjects/datastar-progressive/templates/ticker.html",
+      "action": "create"
+    },
+    {
+      "output": ".batman/outputs/2_ticker_endpoints.txt",
+      "target": "/Users/cminds/PycharmProjects/datastar-progressive/main.py",
+      "action": "replace"
+    },
+    {
+      "output": ".batman/outputs/3_add_ticker_link.txt",
+      "target": "/Users/cminds/PycharmProjects/datastar-progressive/templates/index.html",
+      "action": "replace"
+    }
+  ]
+}
