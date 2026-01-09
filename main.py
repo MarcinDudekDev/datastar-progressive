@@ -4,19 +4,19 @@ from fastapi.responses import HTMLResponse
 from datastar_py import ServerSentEventGenerator as SSE
 from datastar_py.fastapi import DatastarResponse
 import asyncio
-import random
+import yfinance as yf
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# Stock data - matches ticker.html frontend
-STOCKS = [
-    {"symbol": "AAPL", "name": "Apple Inc.", "price": 178.50},
-    {"symbol": "GOOGL", "name": "Alphabet Inc.", "price": 141.25},
-    {"symbol": "MSFT", "name": "Microsoft Corp.", "price": 378.00},
-    {"symbol": "TSLA", "name": "Tesla Inc.", "price": 248.75},
-    {"symbol": "AMZN", "name": "Amazon.com Inc.", "price": 178.00},
-]
+# Stock symbols and names
+STOCK_NAMES = {
+    "AAPL": "Apple Inc.",
+    "GOOGL": "Alphabet Inc.",
+    "MSFT": "Microsoft Corp.",
+    "TSLA": "Tesla Inc.",
+    "AMZN": "Amazon.com Inc.",
+}
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -100,35 +100,45 @@ async def ticker_page(request: Request):
 
 @app.get("/stream-ticker")
 async def stream_ticker():
-    """Stream stock prices with random fluctuations as flat signals"""
+    """Stream real stock prices from Yahoo Finance"""
     import time
     async def generate():
-        prices = {s["symbol"]: s["price"] for s in STOCKS}
+        symbols = list(STOCK_NAMES.keys())
+        prev_prices = {}
 
         while True:
             signals = {}
-            ts = int(time.time() * 1000)  # Timestamp to force animation re-trigger
+            ts = int(time.time() * 1000)
 
-            for stock in STOCKS:
-                sym = stock["symbol"]
-                old_price = prices[sym]
-                change = random.uniform(-2.0, 2.0)
-                new_price = max(1.0, old_price + change)
-                prices[sym] = new_price
+            try:
+                # Fetch real prices from Yahoo Finance
+                tickers = yf.Tickers(" ".join(symbols))
+                for sym in symbols:
+                    info = tickers.tickers[sym].info
+                    price = info.get("regularMarketPrice", 0) or info.get("currentPrice", 0)
+                    prev_close = info.get("regularMarketPreviousClose", price)
 
-                direction = "up" if new_price > old_price else "down" if new_price < old_price else ""
-                change_pct = ((new_price - old_price) / old_price) * 100
+                    if price:
+                        old_price = prev_prices.get(sym, price)
+                        prev_prices[sym] = price
 
-                # Flat signals per stock: AAPL_price, AAPL_change, etc.
-                signals[f"{sym}_symbol"] = sym
-                signals[f"{sym}_name"] = stock["name"]
-                signals[f"{sym}_price"] = f"${new_price:.2f}"
-                signals[f"{sym}_change"] = f"{'+' if change_pct >= 0 else ''}{change_pct:.2f}%"
-                signals[f"{sym}_dir"] = direction
-                signals[f"{sym}_ts"] = ts
+                        # Direction based on previous fetch (for flash animation)
+                        direction = "up" if price > old_price else "down" if price < old_price else ""
+                        # Change % based on previous close (market change)
+                        change_pct = ((price - prev_close) / prev_close) * 100 if prev_close else 0
 
-            yield SSE.patch_signals(signals)
-            await asyncio.sleep(1.0)
+                        signals[f"{sym}_symbol"] = sym
+                        signals[f"{sym}_name"] = STOCK_NAMES[sym]
+                        signals[f"{sym}_price"] = f"${price:.2f}"
+                        signals[f"{sym}_change"] = f"{'+' if change_pct >= 0 else ''}{change_pct:.2f}%"
+                        signals[f"{sym}_dir"] = direction
+                        signals[f"{sym}_ts"] = ts
+
+                yield SSE.patch_signals(signals)
+            except Exception as e:
+                print(f"Error fetching prices: {e}")
+
+            await asyncio.sleep(5.0)  # Poll every 5 seconds (be nice to Yahoo)
 
     return DatastarResponse(generate())
 
