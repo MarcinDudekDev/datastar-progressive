@@ -415,18 +415,23 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      border: 1px solid var(--border-default);
+      border: 1px solid var(--border-default) !important;
       border-radius: 5px;
-      color: var(--text-secondary);
-      background: transparent;
+      color: var(--text-secondary) !important;
+      background: transparent !important;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-weight: 500;
       font-size: 0.8rem;
       padding: 0.4rem 0.75rem;
+      height: auto;
+      line-height: 1.4;
+      box-sizing: border-box;
       transition: all 0.15s ease;
     }
     .file-label:hover {
-      border-color: var(--text-muted);
-      color: var(--text-bright);
-      background: var(--bg-elevated);
+      border-color: var(--text-muted) !important;
+      color: var(--text-bright) !important;
+      background: var(--bg-elevated) !important;
     }
     .import-error {
       color: var(--accent);
