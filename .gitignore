@@ -5,3 +5,7 @@ __pycache__/
 .env
 *.log
 .DS_Store
+
+# RSVP user data
+rsvp_library.json
+rsvp_state.json
