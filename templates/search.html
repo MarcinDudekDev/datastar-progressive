@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Live Search Demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    #results ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      columns: 3;
+    }
+    #results li {
+      padding: 0.25rem 0;
+      break-inside: avoid;
+    }
+    mark {
+      background: #ffd700;
+      color: #000;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+    .stats {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    input[type="search"] {
+      font-size: 1.5rem;
+      padding: 1rem;
+    }
+    .def-btn {
+      cursor: pointer;
+      color: #666;
+      font-size: 0.8rem;
+      margin-left: 0.3rem;
+      border: 1px solid #444;
+      border-radius: 50%;
+      width: 1.2em;
+      height: 1.2em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .def-btn:hover {
+      background: #333;
+      color: #fff;
+    }
+    #definition {
+      background: #1a1a2e;
+      border-left: 3px solid #ffd700;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 4px;
+    }
+    #definition:empty {
+      display: none;
+    }
+    .close-def {
+      cursor: pointer;
+      float: right;
+      color: #666;
+      font-size: 1.2rem;
+    }
+    .close-def:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <a href="/" style="color:#666;text-decoration:none;font-size:0.9rem;">&larr; Back to demos</a>
+
+    <h1>Live Dictionary Search</h1>
+    <p>Search 235,976 English words with instant results</p>
+
+    <div data-signals='{"q": "", "count": 0}'>
+      <input
+        type="search"
+        placeholder="Start typing..."
+        data-bind="$q"
+        data-on:input__debounce-200="@get('/search-words')"
+        autofocus
+      >
+
+      <p class="stats">
+        <span data-show="$count > 0">
+          Found <strong data-text="$count"></strong> matches (showing first 100)
+        </span>
+      </p>
+
+      <div id="definition"></div>
+
+      <div id="results">
+        <p style="color:#666">Type at least 2 characters...</p>
+      </div>
+    </div>
+  </main>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"></script>
+</body>
+</html>
