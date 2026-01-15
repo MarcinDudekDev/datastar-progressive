@@ -46,7 +46,11 @@
       color: var(--text-secondary) !important;
       font-family: 'IBM Plex Sans', sans-serif;
       font-weight: 500;
-      transition: all 0.2s ease;
+      font-size: 0.8rem;
+      padding: 0.4rem 0.75rem;
+      height: auto;
+      line-height: 1.4;
+      transition: all 0.15s ease;
     }
     button:hover, [type="button"]:hover, [type="submit"]:hover {
       border-color: var(--text-muted) !important;
@@ -82,8 +86,8 @@
     @media (min-width: 900px) {
       .main-layout {
         display: grid;
-        grid-template-columns: 1fr 340px;
-        gap: 3rem;
+        grid-template-columns: 1fr 400px;
+        gap: 2.5rem;
         align-items: start;
       }
       .input-section {
@@ -205,22 +209,26 @@
     /* Input elements */
     textarea, input[type="text"], input[type="url"] {
       font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.85rem;
       background: var(--bg-elevated) !important;
       border: 1px solid var(--border-default) !important;
       color: var(--text-primary) !important;
-      border-radius: 6px;
-      transition: border-color 0.2s ease;
+      border-radius: 5px;
+      padding: 0.4rem 0.6rem;
+      transition: border-color 0.15s ease;
     }
     textarea:focus, input[type="text"]:focus, input[type="url"]:focus {
       border-color: var(--text-muted) !important;
       outline: none;
     }
     textarea {
-      min-height: 100px;
+      min-height: 80px;
       resize: vertical;
+      padding: 0.5rem 0.6rem;
     }
     textarea::placeholder, input::placeholder {
       color: var(--text-muted);
+      font-size: 0.8rem;
     }
 
     .input-section {
@@ -283,16 +291,16 @@
     .library-section {
       background: var(--bg-raised);
       border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 1rem;
-      margin-bottom: 1rem;
+      border-radius: 8px;
+      padding: 0.875rem;
+      margin-bottom: 0.875rem;
     }
     .library-header {
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
     }
     .library-header h3 {
       margin: 0;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.08em;
@@ -301,17 +309,17 @@
     .library-list {
       display: flex;
       flex-direction: column;
-      gap: 0.4rem;
-      max-height: 180px;
+      gap: 0.35rem;
+      max-height: 160px;
       overflow-y: auto;
     }
     .library-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.6rem 0.75rem;
+      padding: 0.5rem 0.65rem;
       background: var(--bg-elevated);
-      border-radius: 6px;
+      border-radius: 5px;
       border: 1px solid transparent;
       cursor: pointer;
       transition: all 0.15s ease;
@@ -323,22 +331,22 @@
     .library-item.active {
       background: var(--bg-base);
       border-left: 2px solid var(--accent);
-      padding-left: calc(0.75rem - 1px);
+      padding-left: calc(0.65rem - 1px);
     }
     .library-item .info { flex: 1; min-width: 0; cursor: pointer; }
     .library-item .title {
       font-weight: 500;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       color: var(--text-primary);
     }
     .library-item .meta {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
       white-space: nowrap;
-      margin-top: 0.15rem;
+      margin-top: 0.1rem;
       font-variant-numeric: tabular-nums;
     }
     .library-item .meta .position { color: var(--text-secondary); }
@@ -347,69 +355,73 @@
       gap: 0.25rem;
       opacity: 0;
       transition: opacity 0.15s ease;
+      margin-left: 0.5rem;
     }
     .library-item:hover .actions { opacity: 1; }
     .library-item .actions button {
-      padding: 0.2rem 0.5rem;
-      font-size: 0.7rem;
+      padding: 0.15rem 0.4rem;
+      font-size: 0.65rem;
       min-width: auto;
-      border-radius: 4px;
+      border-radius: 3px;
     }
     .library-empty {
       color: var(--text-muted);
       text-align: center;
-      padding: 1.5rem 1rem;
-      font-size: 0.85rem;
+      padding: 1rem;
+      font-size: 0.8rem;
     }
 
     /* Save dialog */
     .save-dialog {
       display: flex;
-      gap: 0.5rem;
-      margin-top: 0.75rem;
-      padding-top: 0.75rem;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-top: 0.6rem;
+      padding-top: 0.6rem;
       border-top: 1px solid var(--border-subtle);
     }
     .save-dialog input {
-      flex: 1;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.85rem;
-    }
-    .save-dialog button {
-      padding: 0.5rem 0.75rem;
+      width: 100%;
+      padding: 0.4rem 0.6rem;
       font-size: 0.8rem;
-      white-space: nowrap;
+    }
+    .save-dialog .btn-row {
+      display: flex;
+      gap: 0.4rem;
     }
 
     /* Import section */
     .import-section {
       display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 0.875rem;
       padding: 0.75rem;
       background: var(--bg-raised);
       border: 1px solid var(--border-subtle);
-      border-radius: 10px;
+      border-radius: 8px;
     }
     .import-section input {
-      flex: 2;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.85rem;
-    }
-    .import-section button, .import-section .file-label {
-      padding: 0.5rem 0.75rem;
+      width: 100%;
+      padding: 0.4rem 0.6rem;
       font-size: 0.8rem;
-      white-space: nowrap;
+    }
+    .import-section .btn-row {
+      display: flex;
+      gap: 0.4rem;
     }
     .file-label {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       cursor: pointer;
       border: 1px solid var(--border-default);
-      border-radius: 6px;
+      border-radius: 5px;
       color: var(--text-secondary);
       background: transparent;
-      transition: all 0.2s ease;
+      font-size: 0.8rem;
+      padding: 0.4rem 0.75rem;
+      transition: all 0.15s ease;
     }
     .file-label:hover {
       border-color: var(--text-muted);
@@ -418,8 +430,8 @@
     }
     .import-error {
       color: var(--accent);
-      font-size: 0.8rem;
-      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
     }
 
     /* Loaded text info */
@@ -456,17 +468,19 @@
     }
 
     /* Label styling */
-    label {
-      font-size: 0.8rem;
+    label:not(.file-label) {
+      font-size: 0.7rem;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.35rem;
       display: block;
     }
     small {
       color: var(--text-muted);
-      font-size: 0.8rem;
+      font-size: 0.75rem;
+      display: block;
+      margin-top: 0.35rem;
     }
 
     /* Reading mode - hide distractions */
@@ -586,19 +600,23 @@
           <!-- Save new text -->
           <div class="save-dialog">
             <input type="text" placeholder="Title for new text..." data-bind="$saveTitle">
-            <button data-on:click="@get('/rsvp/library/save')" data-attr-disabled="$text.trim().length < 10">Save</button>
-            <button data-show="$text_id" data-on:click="@get('/rsvp/library/delete/' + $text_id)">Delete</button>
+            <div class="btn-row">
+              <button data-on:click="@get('/rsvp/library/save')" data-attr-disabled="$text.trim().length < 10">Save</button>
+              <button data-show="$text_id" data-on:click="@get('/rsvp/library/delete/' + $text_id)">Delete</button>
+            </div>
           </div>
         </div>
 
         <!-- Import from URL or EPUB -->
         <div class="import-section">
           <input type="url" placeholder="Paste article URL..." data-bind="$importUrl">
-          <button data-on:click="@get('/rsvp/import-url')" data-attr-disabled="!$importUrl || $importUrl.length < 10">Import</button>
-          <label class="file-label">
-            EPUB
-            <input type="file" accept=".epub" style="display: none;" onchange="window.uploadEpub(this)">
-          </label>
+          <div class="btn-row">
+            <button data-on:click="@get('/rsvp/import-url')" data-attr-disabled="!$importUrl || $importUrl.length < 10">Import URL</button>
+            <label class="file-label">
+              EPUB
+              <input type="file" accept=".epub" style="display: none;" onchange="window.uploadEpub(this)">
+            </label>
+          </div>
         </div>
         <div class="import-error" data-show="$importError" data-text="$importError"></div>
 
