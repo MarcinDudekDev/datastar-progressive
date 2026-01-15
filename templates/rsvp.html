@@ -30,23 +30,35 @@
     .word-display::after {
       content: '';
       position: absolute;
-      left: 35%;
+      left: 50%;
+      transform: translateX(-50%);
       width: 2px;
       height: 15px;
-      background: #444;
+      background: #e63946;
     }
     .word-display::before { top: 10px; }
     .word-display::after { bottom: 10px; }
     .word {
-      font-family: 'Courier New', monospace;
+      font-family: 'Courier New', Consolas, monospace;
       font-size: 4rem;
       font-weight: bold;
-      letter-spacing: 0.1em;
-      white-space: nowrap;
+      white-space: pre;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      width: 100%;
     }
-    .word .before { color: #fff; }
-    .word .orp { color: #e63946; }
-    .word .after { color: #fff; }
+    .word .before {
+      color: #fff;
+      text-align: right;
+    }
+    .word .orp {
+      color: #e63946;
+      text-align: center;
+    }
+    .word .after {
+      color: #fff;
+      text-align: left;
+    }
     .progress-bar {
       background: #222;
       height: 6px;
