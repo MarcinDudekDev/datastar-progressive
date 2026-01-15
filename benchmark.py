@@ -75,6 +75,11 @@ def main():
     print(f"\n   FastAPI: {fastapi_size:,} bytes")
     print(f"   Stario:  {stario_size:,} bytes")
 
+    # Dependencies
+    print("\n DEPENDENCIES:")
+    print("   FastAPI: fastapi, uvicorn, datastar-py, jinja2, yfinance, httpx")
+    print("   Stario:  stario (includes server), jinja2, yfinance, httpx")
+
     # Endpoint benchmarks
     print(f"\n RESPONSE TIME ({ITERATIONS} requests each):")
 
@@ -107,18 +112,28 @@ def main():
     # Memory comparison
     print("\n MEMORY USAGE:")
 
-    # Find PIDs
-    for proc in psutil.process_iter(['pid', 'cmdline']):
+    # Find PIDs - look for port-specific processes
+    fastapi_mem = stario_mem = None
+    for proc in psutil.process_iter(['pid', 'cmdline', 'memory_info']):
         try:
             cmd = ' '.join(proc.info['cmdline'] or [])
-            if 'main.py' in cmd and 'python' in cmd and 'stario' not in cmd:
-                mem = get_memory_mb(proc.info['pid'])
-                print(f"   FastAPI: {mem:.1f} MB")
-            elif 'main_stario.py' in cmd and 'python' in cmd:
-                mem = get_memory_mb(proc.info['pid'])
-                print(f"   Stario:  {mem:.1f} MB")
+            mem = proc.info['memory_info'].rss / 1024 / 1024
+            # FastAPI uvicorn worker (not master, not uv wrapper)
+            if '--port 8000' in cmd and 'uvicorn' in cmd:
+                fastapi_mem = mem
+            # Stario main process (not uv wrapper)
+            elif 'main_stario.py' in cmd and 'uv run' not in cmd:
+                stario_mem = mem
         except:
             pass
+    if fastapi_mem:
+        print(f"   FastAPI: {fastapi_mem:.1f} MB")
+    if stario_mem:
+        print(f"   Stario:  {stario_mem:.1f} MB")
+    if fastapi_mem and stario_mem:
+        diff = ((stario_mem - fastapi_mem) / fastapi_mem) * 100
+        lighter = "Stario" if diff < 0 else "FastAPI"
+        print(f"   Winner:  {lighter} ({abs(diff):.1f}% less memory)")
 
     print("\n" + "=" * 60)
 

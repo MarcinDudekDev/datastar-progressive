@@ -30,6 +30,30 @@ STOCK_NAMES = {
     "AMZN": "Amazon.com Inc.",
 }
 
+# RSVP Reader state (simple global for demo)
+rsvp_state = {
+    "words": [],
+    "position": 0,
+    "wpm": 300,
+    "running": False,
+    "task": None,
+}
+
+
+def calculate_orp(word: str) -> int:
+    """Calculate Optimal Recognition Point for a word."""
+    length = len(word)
+    if length <= 1:
+        return 0
+    elif length <= 5:
+        return 1
+    elif length <= 9:
+        return 2
+    elif length <= 13:
+        return 3
+    else:
+        return 4
+
 
 # =============================================================================
 # Page Routes (HTML responses)
@@ -54,6 +78,11 @@ async def ticker_page(c: Context, w: Writer) -> None:
 async def search_page(c: Context, w: Writer) -> None:
     """Serve the live search demo"""
     w.respond(templates.get_template("search.html").render().encode(), b"text/html; charset=utf-8")
+
+
+async def rsvp_page(c: Context, w: Writer) -> None:
+    """Serve the RSVP speed reader demo"""
+    w.respond(templates.get_template("rsvp.html").render().encode(), b"text/html; charset=utf-8")
 
 
 # =============================================================================
@@ -221,6 +250,112 @@ async def clear_definition(c: Context, w: Writer) -> None:
 
 
 # =============================================================================
+# RSVP Speed Reader
+# =============================================================================
+
+
+def get_word_parts(word: str) -> dict:
+    """Split word into before, orp (red letter), and after parts."""
+    if not word:
+        return {"before": "", "orp": "", "after": "", "word": ""}
+    orp_idx = calculate_orp(word)
+    return {
+        "before": word[:orp_idx],
+        "orp": word[orp_idx] if orp_idx < len(word) else "",
+        "after": word[orp_idx + 1:] if orp_idx + 1 < len(word) else "",
+        "word": word,
+    }
+
+
+async def rsvp_start(c: Context, w: Writer) -> None:
+    """Start or resume the RSVP reader."""
+    global rsvp_state
+
+    # Get text from signals
+    signals = await c.signals()
+    text = signals.get("$text", "")
+
+    # Parse words if new text or reset
+    if text and (not rsvp_state["words"] or rsvp_state["position"] == 0):
+        # Split on whitespace, filter empty
+        import re
+        rsvp_state["words"] = [w for w in re.split(r'\s+', text.strip()) if w]
+        rsvp_state["position"] = 0
+
+    if not rsvp_state["words"]:
+        return
+
+    rsvp_state["running"] = True
+    total = len(rsvp_state["words"])
+
+    # Stream words at WPM rate
+    while rsvp_state["running"] and rsvp_state["position"] < total:
+        word = rsvp_state["words"][rsvp_state["position"]]
+        parts = get_word_parts(word)
+
+        # Calculate delay from WPM (words per minute -> seconds per word)
+        delay = 60.0 / rsvp_state["wpm"]
+
+        w.sync({
+            **parts,
+            "wpm": rsvp_state["wpm"],
+            "progress": (rsvp_state["position"] + 1) / total,
+            "current_word": rsvp_state["position"] + 1,
+            "total_words": total,
+            "running": True,
+        })
+
+        rsvp_state["position"] += 1
+        await asyncio.sleep(delay)
+
+    # Finished or paused
+    if rsvp_state["position"] >= total:
+        rsvp_state["running"] = False
+        w.sync({"running": False, "progress": 1.0})
+
+
+async def rsvp_pause(c: Context, w: Writer) -> None:
+    """Pause the RSVP reader."""
+    global rsvp_state
+    rsvp_state["running"] = False
+    w.sync({"running": False})
+
+
+async def rsvp_reset(c: Context, w: Writer) -> None:
+    """Reset the RSVP reader."""
+    global rsvp_state
+    rsvp_state["running"] = False
+    rsvp_state["position"] = 0
+    rsvp_state["words"] = []
+    rsvp_state["wpm"] = 300
+    w.sync({
+        "word": "",
+        "before": "",
+        "orp": "",
+        "after": "",
+        "wpm": 300,
+        "progress": 0,
+        "running": False,
+        "current_word": 0,
+        "total_words": 0,
+    })
+
+
+async def rsvp_slower(c: Context, w: Writer) -> None:
+    """Decrease reading speed."""
+    global rsvp_state
+    rsvp_state["wpm"] = max(100, rsvp_state["wpm"] - 50)
+    w.sync({"wpm": rsvp_state["wpm"]})
+
+
+async def rsvp_faster(c: Context, w: Writer) -> None:
+    """Increase reading speed."""
+    global rsvp_state
+    rsvp_state["wpm"] = min(1200, rsvp_state["wpm"] + 50)
+    w.sync({"wpm": rsvp_state["wpm"]})
+
+
+# =============================================================================
 # App
 # =============================================================================
 
@@ -234,12 +369,18 @@ async def main():
         app.get("/typewriter", typewriter_page)
         app.get("/ticker", ticker_page)
         app.get("/search", search_page)
+        app.get("/rsvp", rsvp_page)
         app.get("/load/*", load_stage)
         app.get("/stream-typewriter", stream_typewriter)
         app.get("/stream-ticker", stream_ticker)
         app.get("/search-words", search_words)
         app.get("/define/*", define_word)
         app.get("/clear-def", clear_definition)
+        app.get("/rsvp/start", rsvp_start)
+        app.get("/rsvp/pause", rsvp_pause)
+        app.get("/rsvp/reset", rsvp_reset)
+        app.get("/rsvp/slower", rsvp_slower)
+        app.get("/rsvp/faster", rsvp_faster)
 
         print("Starting Stario server at http://127.0.0.1:8001")
         await app.serve(host="127.0.0.1", port=8001)

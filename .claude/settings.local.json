@@ -4,7 +4,10 @@
       "WebFetch(domain:pypi.org)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:data-star.dev)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:stario.dev)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:docs.astral.sh)"
     ]
   }
 }

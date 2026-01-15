@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Speed Reader (RSVP)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    body {
+      background: #0a0a0a;
+    }
+    .reader-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .word-display {
+      background: #111;
+      border-radius: 8px;
+      padding: 4rem 2rem;
+      margin: 2rem 0;
+      text-align: center;
+      position: relative;
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .word-display::before,
+    .word-display::after {
+      content: '';
+      position: absolute;
+      left: 35%;
+      width: 2px;
+      height: 15px;
+      background: #444;
+    }
+    .word-display::before { top: 10px; }
+    .word-display::after { bottom: 10px; }
+    .word {
+      font-family: 'Courier New', monospace;
+      font-size: 4rem;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+    .word .before { color: #fff; }
+    .word .orp { color: #e63946; }
+    .word .after { color: #fff; }
+    .progress-bar {
+      background: #222;
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, #e63946, #f4a261);
+      height: 100%;
+      transition: width 0.1s linear;
+    }
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .wpm {
+      font-size: 1.2rem;
+      color: #f4a261;
+      font-weight: bold;
+    }
+    .controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 1.5rem 0;
+    }
+    .controls button {
+      min-width: 100px;
+    }
+    .speed-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      justify-content: center;
+      margin: 1rem 0;
+    }
+    .speed-controls button {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 50%;
+    }
+    textarea {
+      font-family: inherit;
+      min-height: 150px;
+      background: #111;
+      border: 1px solid #333;
+    }
+    .input-section {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #222;
+    }
+    .idle-message {
+      color: #666;
+      font-size: 1.5rem;
+    }
+    .back-link {
+      color: #666;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <main class="reader-container">
+    <a href="/" class="back-link">&larr; Back to demos</a>
+
+    <h1>Speed Reader</h1>
+    <p>RSVP (Rapid Serial Visual Presentation) - read faster by eliminating eye movement</p>
+
+    <div data-signals='{"word": "", "before": "", "orp": "", "after": "", "wpm": 300, "progress": 0, "running": false, "total_words": 0, "current_word": 0, "text": ""}'>
+
+      <div class="word-display">
+        <div class="word" data-show="$running || $word">
+          <span class="before" data-text="$before"></span><span class="orp" data-text="$orp"></span><span class="after" data-text="$after"></span>
+        </div>
+        <div class="idle-message" data-show="!$running && !$word">
+          Enter text below and press Start
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" data-attr-style="'width:' + ($progress * 100) + '%'"></div>
+      </div>
+
+      <div class="stats">
+        <span>Word <span data-text="$current_word"></span> of <span data-text="$total_words"></span></span>
+        <span class="wpm"><span data-text="$wpm"></span> WPM</span>
+      </div>
+
+      <div class="controls">
+        <button
+          data-on:click="@get('/rsvp/start')"
+          data-show="!$running"
+          data-attr-disabled="$text.trim().length < 10"
+        >
+          Start
+        </button>
+        <button data-on:click="@get('/rsvp/pause')" data-show="$running" class="secondary">
+          Pause
+        </button>
+        <button data-on:click="@get('/rsvp/reset')" class="outline">
+          Reset
+        </button>
+      </div>
+
+      <div class="speed-controls">
+        <button data-on:click="@get('/rsvp/slower')" class="outline" title="Slower">-</button>
+        <span style="min-width: 80px; text-align: center;">Speed</span>
+        <button data-on:click="@get('/rsvp/faster')" class="outline" title="Faster">+</button>
+      </div>
+
+      <div class="input-section">
+        <label for="text-input">Text to read:</label>
+        <textarea
+          id="text-input"
+          placeholder="Paste or type your text here... (minimum 10 characters)"
+          data-bind="$text"
+        ></textarea>
+        <small style="color:#666">Try pasting an article, book excerpt, or any text you want to speed-read.</small>
+      </div>
+
+    </div>
+  </main>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"></script>
+</body>
+</html>
