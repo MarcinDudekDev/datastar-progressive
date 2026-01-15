@@ -11,9 +11,23 @@
       min-height: 100vh;
     }
     .reader-container {
-      max-width: 800px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 1.5rem;
+    }
+    /* Two-column layout on desktop */
+    @media (min-width: 900px) {
+      .main-layout {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 2rem;
+        align-items: start;
+      }
+      .input-section {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        border-top: none !important;
+      }
     }
     .word-display {
       background: #0a0a0a;
@@ -39,21 +53,6 @@
     .word .before { color: #fff; text-align: right; }
     .word .orp { color: #e63946; text-align: center; }
     .word .after { color: #fff; text-align: left; }
-    /* Progress bar */
-    .progress-bar {
-      background: #222;
-      height: 4px;
-      border-radius: 2px;
-      overflow: hidden;
-      margin: 0.5rem 0;
-      width: 100%;
-      max-width: 600px;
-    }
-    .progress-fill {
-      background: linear-gradient(90deg, #e63946, #f4a261);
-      height: 100%;
-      transition: width 0.1s linear;
-    }
     .stats {
       display: flex;
       justify-content: space-between;
@@ -111,16 +110,21 @@
     .back-link:hover { color: #fff; }
     .keyboard-hints {
       text-align: center;
-      font-size: 0.75rem;
-      color: #444;
-      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: #111;
+      border-radius: 6px;
     }
     .keyboard-hints kbd {
-      background: #222;
-      border: 1px solid #333;
-      border-radius: 3px;
-      padding: 0.1rem 0.4rem;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      border-radius: 4px;
+      padding: 0.2rem 0.5rem;
       font-family: monospace;
+      color: #ccc;
+      font-size: 0.8rem;
     }
     /* Library */
     .library-section {
@@ -156,9 +160,13 @@
     }
     .library-item:hover { background: #252525; }
     .library-item.active { background: #1e1e2e; border-left: 3px solid #e63946; }
-    .library-item .title { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
+    .library-item .info { flex: 1; min-width: 0; cursor: pointer; }
+    .library-item .title { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
     .library-item .meta { font-size: 0.8rem; color: #666; white-space: nowrap; }
     .library-item .meta .position { color: #4ade80; }
+    .library-item .actions { display: flex; gap: 0.25rem; opacity: 0; transition: opacity 0.2s; }
+    .library-item:hover .actions { opacity: 1; }
+    .library-item .actions button { padding: 0.2rem 0.4rem; font-size: 0.7rem; min-width: auto; }
     .library-empty { color: #555; text-align: center; padding: 1rem; font-size: 0.9rem; }
     /* Save dialog */
     .save-dialog {
@@ -216,22 +224,18 @@
         }'>
     <a href="/" class="back-link" data-show="!$running">&larr; Back to demos</a>
 
-    <h1 data-show="!$running">Speed Reader</h1>
-    <p data-show="!$running">RSVP (Rapid Serial Visual Presentation) - read faster by eliminating eye movement</p>
+    <h1 data-show="!$running" style="margin-bottom: 0.5rem;">Speed Reader</h1>
+    <p data-show="!$running" style="margin-bottom: 1rem; color: #666;">RSVP - read faster by eliminating eye movement</p>
 
-    <div>
-      <!-- Progress bar -->
-      <div class="progress-bar">
-        <div class="progress-fill" data-attr-style="'width:' + ($progress * 100) + '%'"></div>
-      </div>
+    <div class="main-layout">
+      <div class="reader-area">
+        <!-- Stats -->
+        <div class="stats">
+          <span>Word <span data-text="$current_word"></span> of <span data-text="$total_words"></span></span>
+          <span class="wpm"><span data-text="$wpm"></span> WPM</span>
+        </div>
 
-      <!-- Stats -->
-      <div class="stats">
-        <span>Word <span data-text="$current_word"></span> of <span data-text="$total_words"></span></span>
-        <span class="wpm"><span data-text="$wpm"></span> WPM</span>
-      </div>
-
-      <div class="word-display">
+        <div class="word-display">
         <div class="word" data-show="$running || $word">
           <span class="before" data-text="$before"></span><span class="orp" data-text="$orp"></span><span class="after" data-text="$after"></span>
         </div>
@@ -271,8 +275,9 @@
         <kbd>↑</kbd><kbd>↓</kbd> Speed &nbsp;
         <kbd>Esc</kbd> Pause
       </div>
+      </div><!-- end reader-area -->
 
-      <!-- Library section (not during reading) -->
+      <!-- Library section (sidebar on desktop) -->
       <div class="input-section" data-show="!$running">
 
         <!-- Library -->
@@ -285,15 +290,19 @@
             {% if library %}
               {% for item in library %}
               <div class="library-item{% if loop.first %} active{% endif %}"
-                   data-class="{'active': $text_id === '{{ item.id }}'}"
-                   data-on:click="@get('/rsvp/library/load/{{ item.id }}')">
-                <div class="title">{{ item.title }}</div>
-                <div class="meta">
-                  {% if item.position > 0 %}
-                  <span class="position">{{ item.position }}/{{ item.word_count }}</span>
-                  {% else %}
-                  <span>{{ item.word_count }} words</span>
-                  {% endif %}
+                   data-class="{'active': $text_id === '{{ item.id }}'}">
+                <div class="info" data-on:click="@get('/rsvp/library/load/{{ item.id }}')">
+                  <div class="title">{{ item.title }}</div>
+                  <div class="meta">
+                    {% if item.position > 0 %}
+                    <span class="position">{{ item.position }}/{{ item.word_count }}</span>
+                    {% else %}
+                    <span>{{ item.word_count }} words</span>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="actions">
+                  <button class="outline secondary" data-on:click.stop="@get('/rsvp/library/delete/{{ item.id }}')" title="Delete">✕</button>
                 </div>
               </div>
               {% endfor %}
