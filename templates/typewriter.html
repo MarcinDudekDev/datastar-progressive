@@ -38,8 +38,8 @@
 <body>
   <a href="/" style="position:fixed;top:1rem;left:1rem;color:#00ff00;text-decoration:none;font-family:monospace;">← Back</a>
   <div id="typewriter"
-       data-signals='{"content": ""}'
-       data-init="@get('/stream-typewriter')"><span data-text="$content"></span><span class="cursor"></span></div>
-  <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"></script>
+       data-signals='{"fullText": "", "pos": 0}'
+       data-init="@get('/stream-typewriter')"><span data-text="$fullText.substring(0, $pos)"></span><span class="cursor"></span></div>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.8/bundles/datastar.js"></script>
 </body>
 </html>

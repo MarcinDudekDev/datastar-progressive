@@ -554,10 +554,10 @@
           class="primary-action"
           data-on:click="@get('/rsvp/start')"
           data-show="!$running"
-          data-attr-disabled="$total_words < 1"
+          data-attr:disabled="$total_words < 1"
         >Start</button>
         <button data-on:click="@get('/rsvp/pause')" data-show="$running">Pause</button>
-        <button data-on:click="@get('/rsvp/reset')" data-attr-disabled="$total_words < 1">Reset</button>
+        <button data-on:click="@get('/rsvp/reset')" data-attr:disabled="$total_words < 1">Reset</button>
       </div>
 
       <!-- Keyboard hints -->
@@ -593,7 +593,7 @@
                   </div>
                 </div>
                 <div class="actions">
-                  <button data-on:click.stop="@get('/rsvp/library/delete/{{ item.id }}')" title="Delete">✕</button>
+                  <button data-on:click__stop="@get('/rsvp/library/delete/{{ item.id }}')" title="Delete">✕</button>
                 </div>
               </div>
               {% endfor %}
@@ -606,7 +606,7 @@
           <div class="save-dialog">
             <input type="text" placeholder="Title for new text..." data-bind="$saveTitle">
             <div class="btn-row">
-              <button data-on:click="@get('/rsvp/library/save')" data-attr-disabled="$text.trim().length < 10">Save</button>
+              <button data-on:click="@get('/rsvp/library/save')" data-attr:disabled="$text.trim().length < 10">Save</button>
               <button data-show="$text_id" data-on:click="@get('/rsvp/library/delete/' + $text_id)">Delete</button>
             </div>
           </div>
@@ -616,7 +616,7 @@
         <div class="import-section">
           <input type="url" placeholder="Paste article URL..." data-bind="$importUrl">
           <div class="btn-row">
-            <button data-on:click="@get('/rsvp/import-url')" data-attr-disabled="!$importUrl || $importUrl.length < 10">Import URL</button>
+            <button data-on:click="@get('/rsvp/import-url')" data-attr:disabled="!$importUrl || $importUrl.length < 10">Import URL</button>
             <label class="file-label">
               EPUB
               <input type="file" accept=".epub" style="display: none;" onchange="window.uploadEpub(this)">
@@ -648,7 +648,7 @@
     </div>
   </main>
 
-  <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.8/bundles/datastar.js"></script>
   <script>
     // EPUB file upload handler
     window.uploadEpub = async function(input) {
