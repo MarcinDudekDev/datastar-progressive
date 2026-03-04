@@ -496,10 +496,10 @@
 </head>
 <body data-class="{'reading': $running}"
       data-on:keydown__window="
-        evt.key === ' ' ? ($running ? @get('/rsvp/pause') : ($total_words > 0 ? @get('/rsvp/start') : null), evt.preventDefault()) :
-        evt.key === 'Escape' && $running ? (@get('/rsvp/pause'), evt.preventDefault()) :
-        evt.key === 'ArrowUp' ? (@get('/rsvp/faster'), evt.preventDefault()) :
-        evt.key === 'ArrowDown' ? (@get('/rsvp/slower'), evt.preventDefault()) :
+        evt.key === ' ' ? ($running ? @post('/rsvp/pause', {payload: {}}) : ($total_words > 0 ? @post('/rsvp/start', {payload: {}}) : null), evt.preventDefault()) :
+        evt.key === 'Escape' && $running ? (@post('/rsvp/pause', {payload: {}}), evt.preventDefault()) :
+        evt.key === 'ArrowUp' ? (@post('/rsvp/faster', {payload: {}}), evt.preventDefault()) :
+        evt.key === 'ArrowDown' ? (@post('/rsvp/slower', {payload: {}}), evt.preventDefault()) :
         null
       ">
   <main class="reader-container"
@@ -543,21 +543,21 @@
 
       <!-- Speed controls -->
       <div class="speed-controls" data-class="{'dimmed': $running}">
-        <button data-on:click="@get('/rsvp/slower')" title="Slower (↓)">−</button>
+        <button data-on:click="@post('/rsvp/slower', {payload: {}})" title="Slower (↓)">−</button>
         <span class="wpm-display" data-text="$wpm + ' WPM'" title="Reading speed"></span>
-        <button data-on:click="@get('/rsvp/faster')" title="Faster (↑)">+</button>
+        <button data-on:click="@post('/rsvp/faster', {payload: {}})" title="Faster (↑)">+</button>
       </div>
 
       <!-- Main controls -->
       <div class="controls">
         <button
           class="primary-action"
-          data-on:click="@get('/rsvp/start')"
+          data-on:click="@post('/rsvp/start', {payload: {}})"
           data-show="!$running"
           data-attr:disabled="$total_words < 1"
         >Start</button>
-        <button data-on:click="@get('/rsvp/pause')" data-show="$running">Pause</button>
-        <button data-on:click="@get('/rsvp/reset')" data-attr:disabled="$total_words < 1">Reset</button>
+        <button data-on:click="@post('/rsvp/pause', {payload: {}})" data-show="$running">Pause</button>
+        <button data-on:click="@post('/rsvp/reset', {payload: {}})" data-attr:disabled="$total_words < 1">Reset</button>
       </div>
 
       <!-- Keyboard hints -->
@@ -582,7 +582,7 @@
               {% for item in library %}
               <div class="library-item{% if loop.first %} active{% endif %}"
                    data-class="{'active': $text_id === '{{ item.id }}'}">
-                <div class="info" data-on:click="@get('/rsvp/library/load/{{ item.id }}')">
+                <div class="info" data-on:click="@post('/rsvp/library/load/{{ item.id }}', {payload: {}})">
                   <div class="title">{{ item.title }}</div>
                   <div class="meta">
                     {% if item.position > 0 %}
@@ -593,7 +593,7 @@
                   </div>
                 </div>
                 <div class="actions">
-                  <button data-on:click__stop="@get('/rsvp/library/delete/{{ item.id }}')" title="Delete">✕</button>
+                  <button data-on:click__stop="@post('/rsvp/library/delete/{{ item.id }}', {payload: {}})" title="Delete">✕</button>
                 </div>
               </div>
               {% endfor %}
@@ -606,8 +606,8 @@
           <div class="save-dialog">
             <input type="text" placeholder="Title for new text..." data-bind="$saveTitle">
             <div class="btn-row">
-              <button data-on:click="@get('/rsvp/library/save')" data-attr:disabled="$text.trim().length < 10">Save</button>
-              <button data-show="$text_id" data-on:click="@get('/rsvp/library/delete/' + $text_id)">Delete</button>
+              <button data-on:click="@post('/rsvp/library/save', {payload: {text: $text, saveTitle: $saveTitle}})" data-attr:disabled="$text.trim().length < 10">Save</button>
+              <button data-show="$text_id" data-on:click="@post('/rsvp/library/delete/' + $text_id, {payload: {}})">Delete</button>
             </div>
           </div>
         </div>
@@ -616,7 +616,7 @@
         <div class="import-section">
           <input type="url" placeholder="Paste article URL..." data-bind="$importUrl">
           <div class="btn-row">
-            <button data-on:click="@get('/rsvp/import-url')" data-attr:disabled="!$importUrl || $importUrl.length < 10">Import URL</button>
+            <button data-on:click="@post('/rsvp/import-url', {payload: {importUrl: $importUrl}})" data-attr:disabled="!$importUrl || $importUrl.length < 10">Import URL</button>
             <label class="file-label">
               EPUB
               <input type="file" accept=".epub" style="display: none;" onchange="window.uploadEpub(this)">

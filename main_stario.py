@@ -519,12 +519,12 @@ async def rsvp_library_load(c: Context, w: Writer) -> None:
     w.sync({
         "text_id": text_id,
         "title": entry.get("title", "Untitled"),
-        "text": entry.get("text", ""),
         "wpm": rsvp_state["wpm"],
         "total_words": total,
         "current_word": position,
         "progress": position / total if total else 0,
         "running": False, "completed": False,
+        "textLoaded": True,
         "word": "", "before": "", "orp": "", "after": "",
     })
 
@@ -601,7 +601,7 @@ async def rsvp_library_delete(c: Context, w: Writer) -> None:
     w.sync({
         "text_id": None if was_active else rsvp_state.get("text_id"),
         "library": build_library_items(),
-        "text": "" if was_active else None,
+        "textLoaded": False if was_active else None,
         "total_words": 0 if was_active else None,
     })
 
@@ -851,17 +851,17 @@ async def main() -> None:
         app.get("/search-words", search_words)
         app.get("/define/*", define_word)
         app.get("/clear-def", clear_definition)
-        app.get("/rsvp/start", rsvp_start)
-        app.get("/rsvp/pause", rsvp_pause)
-        app.get("/rsvp/reset", rsvp_reset)
-        app.get("/rsvp/slower", rsvp_slower)
-        app.get("/rsvp/faster", rsvp_faster)
-        app.get("/rsvp/toggle", rsvp_toggle)
-        app.get("/rsvp/set-wpm", rsvp_set_wpm)
-        app.get("/rsvp/library/load/*", rsvp_library_load)
-        app.get("/rsvp/library/save", rsvp_library_save)
-        app.get("/rsvp/library/delete/*", rsvp_library_delete)
-        app.get("/rsvp/import-url", rsvp_import_url)
+        app.post("/rsvp/start", rsvp_start)
+        app.post("/rsvp/pause", rsvp_pause)
+        app.post("/rsvp/reset", rsvp_reset)
+        app.post("/rsvp/slower", rsvp_slower)
+        app.post("/rsvp/faster", rsvp_faster)
+        app.post("/rsvp/toggle", rsvp_toggle)
+        app.post("/rsvp/set-wpm", rsvp_set_wpm)
+        app.post("/rsvp/library/load/*", rsvp_library_load)
+        app.post("/rsvp/library/save", rsvp_library_save)
+        app.post("/rsvp/library/delete/*", rsvp_library_delete)
+        app.post("/rsvp/import-url", rsvp_import_url)
         app.post("/rsvp/import-epub", rsvp_import_epub)
 
         print(f"Starting Stario server at http://{SERVER_HOST}:{SERVER_PORT}")
